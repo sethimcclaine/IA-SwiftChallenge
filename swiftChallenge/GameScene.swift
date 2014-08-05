@@ -9,6 +9,8 @@
 import SpriteKit
 
 class GameScene: SKScene {
+    var iaLabel = SKLabelNode(fontNamed:"Zapfino")
+    var winnerLabel = SKLabelNode(fontNamed:"Zapfino")
     
     var background:SKSpriteNode = SKSpriteNode(imageNamed: "bg");
     
@@ -50,13 +52,21 @@ class GameScene: SKScene {
     
     //Build and add IA label
     func initLabel() {
-        let myLabel = SKLabelNode(fontNamed:"Zapfino")
-        myLabel.text = "Inspiring Apps";
-        myLabel.fontSize = 36;
-        myLabel.fontColor = SKColor.grayColor()
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:self.frame.height * 0.75);
+        //IA Label
         
-        self.addChild(myLabel)
+        iaLabel.text = "Inspiring Apps";
+        iaLabel.fontSize = 36;
+        iaLabel.fontColor = SKColor.grayColor()
+        iaLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:self.frame.height * 0.75);
+        self.addChild(iaLabel)
+        
+        //Winner Label
+        winnerLabel.text = "WINNER";
+        winnerLabel.fontSize = 36;
+        winnerLabel.fontColor = SKColor.greenColor()
+        winnerLabel.position = CGPoint(x:0, y:0);
+        self.addChild(winnerLabel)
+        
     }
     
     //Build and add background
@@ -149,7 +159,7 @@ class GameScene: SKScene {
     
     //Move dots back and unlock them
     func resetAction(sender:UIButton!) {
-        println("Reset");
+        winnerLabel.position = CGPoint(x:0, y:0);
         positionDots();
         unlockDots();
     }
@@ -165,8 +175,13 @@ class GameScene: SKScene {
         }
         return false;
     }
-    
-    //if dot is near a valide holding cell lock it, and mark that cell as used
+    func checkWinner() {
+        if(!blackCellOpen && !blueCellOpen && !redCellOpen && !greenCellOpen && !blackCell2Open) {
+            println("WINNER");
+            winnerLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:self.frame.height * 0.1);
+        }
+    }
+    //If dot is near a valide holding cell lock it, and mark that cell as used
     func checkDotLocation() {
         var name:String = currentNodeTouched.name;
         switch name {
@@ -175,10 +190,12 @@ class GameScene: SKScene {
                 blackCellOpen = false;
                 blackDotUnlocked = false;
                 currentNodeTouched.position = blackDotEnd;
+                checkWinner();
             } else if (blackCell2Open && compareLocations(blackDot2End)) {
                 blackCell2Open = false
                 blackDotUnlocked = false;
                 currentNodeTouched.position = blackDot2End;
+                checkWinner();
             }
             break
         case "blackDot2":
@@ -186,10 +203,12 @@ class GameScene: SKScene {
                 blackCellOpen = false;
                 blackDot2Unlocked = false;
                 currentNodeTouched.position = blackDotEnd;
+                checkWinner();
             } else if (blackCell2Open && compareLocations(blackDot2End)) {
                 blackCell2Open = false
                 blackDot2Unlocked = false;
                 currentNodeTouched.position = blackDot2End;
+                checkWinner();
             }
             break
         case "blueDot":
@@ -197,6 +216,7 @@ class GameScene: SKScene {
                 blueCellOpen = false;
                 blueDotUnlocked = false;
                 currentNodeTouched.position = blueDotEnd;
+                checkWinner();
             }
             break
         case "redDot":
@@ -204,6 +224,7 @@ class GameScene: SKScene {
                 redCellOpen = false;
                 redDotUnlocked = false;
                 currentNodeTouched.position = redDotEnd;
+                checkWinner();
             }
             break
         case "greenDot":
@@ -211,6 +232,7 @@ class GameScene: SKScene {
                 greenCellOpen = false;
                 greenDotUnlocked = false;
                 currentNodeTouched.position = greenDotEnd;
+                checkWinner();
             }
             break
         default:
